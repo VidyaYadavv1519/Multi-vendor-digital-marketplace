@@ -1,0 +1,58 @@
+{% extends 'myapp/base.html' %}
+
+{% block body %}
+<div class="d-flex justify-content-between">
+    <div class="ml-5 mt-5  ">My Purchases</div>
+    <div class="ml-5 mt-5">
+        <a class="btn btn-success mr-auto" style="width:150px" href="{% url 'createproduct' %}">New product</a>
+    </div>
+</div>
+
+<div class="order-container  p-10 m-5 ">
+    <div class="order-header d-flex justifiy-content-between">
+        <div class="col">
+            Product Name
+
+        </div>
+        <div class="col">
+            Amount Paid
+            
+        </div>
+        <div class="col">
+            Order Date
+            
+        </div>
+        <div class="col">
+            Download Link
+            
+        </div>
+
+    </div>
+    {% for order in orders %}
+    <div class=" row d-flex  m-3 p-2 ">
+        <div class="col">
+            {{order.product.name}}
+
+        </div>
+        <div class="col">
+            {{order.amount}}
+            
+        </div>
+        <div class="col">
+            {{order.created_on}}
+            
+        </div>
+        <div class="col">
+            <a class="btn btn-success" href="{{order.product.product_image.url}}" download>Click to download</a>
+            
+        </div>
+        
+    </div>
+
+</div>
+{% endfor %}
+
+</div>
+
+
+{% endblock %}

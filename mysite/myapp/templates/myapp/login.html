@@ -1,0 +1,33 @@
+{% extends 'myapp/base.html' %}
+
+{% block body %}
+<div>
+    <h1>Login</h1>
+    <form class="shadow-lg p-5" method="POST">
+        {% csrf_token %}
+        <div>
+            <label >Username</label>
+            <div>
+                {{form.username}}
+            </div>
+        </div>
+        <div>
+            <label >Password</label>
+            <div>
+                {{form.password}}
+            </div>
+        </div>
+        
+        
+
+
+        
+        <button class="btn btn-success" type="submit">Login</button>
+    
+    </form>
+    <p>New to the website?<a href="{% url 'register' %}">Click here</a>to register</p>
+    
+</div>
+
+    
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends 'myapp/base.html' %}
+
+{% block body %}
+<div class="d-flex justify-content-between">
+    <div class="ml-5 mt-5 justify-content-around ">My Products</div>
+    <div class="ml-5 mt-5">
+        <a class="btn btn-success mr-auto" style="width:150px" href="{% url 'createproduct' %}">New product</a>
+    </div>
+</div>
+
+<div class="products-container p-10 m-5">
+    {% for product in products %}
+    <div class="d-flex justify-content-between shadow-lg  m-3 p-2 ">
+        <div class="d-flex " >
+            <img height="40" src="{{product.product_image}}" alt="">
+            <div class="relative group">
+                <a href="{% url 'editproduct' product.id %}">
+            <!-- <div class="link-warning">
+                Edit Product
+           
+            </div> -->
+        
+            <div class="btn btn-info"> {{product.name}}</div>
+            <div  class="btn btn-success"> {{product.price}}</div>
+        </div>
+        </a>
+            
+        </div>
+        
+        <div>
+            <div >{{product.total_sales_amount}}</div>
+            <div>Total Earnings</div>
+        </div>
+        <div>
+            <div >{{product.total_sales}}</div>
+            <div>Total Orders</div>
+        </div>
+        <div>
+            <div >4.8</div>
+            <div>Rating</div>
+        </div>
+        
+    
+
+        
+    </div>
+    
+</div>
+    {% endfor %}
+
+</div>
+
+
+{% endblock %}

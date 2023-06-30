@@ -1,0 +1,35 @@
+{% extends 'myapp/base.html' %}
+{% block body %}
+
+
+<h2 style="padding-left: 5%;padding-top: 2%; font-family: 'Verdana';">{{product.category}}</h2>
+
+<div class="row ">
+    
+    {% for product in products %}
+    
+    <div class="col-md-3">
+        
+        <div class="card mx-3 mb-6" style="width: 18rem; ">
+            <img  class="img-fluid rounded-start" src="{{product.product_image}}" class="card-img-top" alt="...">
+            <div class="card-body">
+                <h5 class="card-title">{{ product.name }}</h5>
+                <p class="card-text">{{ product.description }}</p>
+                <a href="{% url 'detail' product.id %}" class="btn btn-primary">View Details</a>
+                <a href="#" class="btn btn-primary">{{ product.price }}</a>
+                
+
+            </div>
+
+        </div>
+       
+    </div>
+    {% endfor %}
+    
+</div>
+
+
+
+{% endblock %}
+
+
