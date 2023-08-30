@@ -17,6 +17,7 @@ from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 
 # Create your views here.
@@ -289,7 +290,7 @@ class DashboardView(LoginRequiredMixin,ListView):
 class RegisterView(FormView):
     template_name = 'myapp/register.html'
     form_class = UserRegistrationForm
-    success_url = reverse_lazy('index')
+    success_url = reverse_lazy('login')
 
     def form_valid(self, form):
         # Set the password and save the user
@@ -327,32 +328,61 @@ class MyPurchasesView(LoginRequiredMixin, ListView):
 class SalesView(LoginRequiredMixin,TemplateView):
     template_name = 'myapp/sales.html'
     login_url = reverse_lazy('login')
-    
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        
+        user = self.request.user  # Get the logged-in user
+
         # Total sales
-        context['total_sales'] = OrderDetail.objects.filter(product__seller=self.request.user).aggregate(Sum('amount'))
+        context['total_sales'] = OrderDetail.objects.filter(product__seller=user).aggregate(Sum('amount'))
 
         # 365 days sales sum
-        last_year = datetime.date.today() - datetime.timedelta(days=365)
-        context['yearly_sales'] = OrderDetail.objects.filter(product__seller=self.request.user, created_on__gt=last_year).aggregate(Sum('amount'))
+        last_year = timezone.now() - timezone.timedelta(days=365)
+        context['yearly_sales'] = OrderDetail.objects.filter(product__seller=user, created_on__gt=last_year).aggregate(Sum('amount'))
 
         # 30 days sales sum
-        last_month = datetime.date.today() - datetime.timedelta(days=30)
-        context['monthly_sales'] = OrderDetail.objects.filter(product__seller=self.request.user, created_on__gt=last_month).aggregate(Sum('amount'))
+        last_month = timezone.now() - timezone.timedelta(days=30)
+        context['monthly_sales'] = OrderDetail.objects.filter(product__seller=user, created_on__gt=last_month).aggregate(Sum('amount'))
 
         # 7 days sales sum
-        last_week = datetime.date.today() - datetime.timedelta(days=7)
-        context['weekly_sales'] = OrderDetail.objects.filter(product__seller=self.request.user, created_on__gt=last_week).aggregate(Sum('amount'))
+        last_week = timezone.now() - timezone.timedelta(days=7)
+        context['weekly_sales'] = OrderDetail.objects.filter(product__seller=user, created_on__gt=last_week).aggregate(Sum('amount'))
 
         # Everyday sum for the past 30 days
-        daily_sales_sums = OrderDetail.objects.filter(product__seller=self.request.user).values('created_on__date').order_by('created_on__date').annotate(sum=Sum('amount'))
+        daily_sales_sums = OrderDetail.objects.filter(product__seller=user).values('created_on__date').order_by('created_on__date').annotate(sum=Sum('amount'))
         context['daily_sales_sums'] = daily_sales_sums
 
         # Product sales sums
-        product_sales_sums = OrderDetail.objects.filter(product__seller=self.request.user).values('product__name').order_by('product__name').annotate(sum=Sum('amount'))
+        product_sales_sums = OrderDetail.objects.filter(product__seller=user).values('product__name').order_by('product__name').annotate(sum=Sum('amount'))
         context['product_sales_sums'] = product_sales_sums
 
         return context
+    
+
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+        
+    #     # Total sales
+    #     context['total_sales'] = OrderDetail.objects.filter(product__seller=self.request.user).aggregate(Sum('amount'))
+
+    #     # 365 days sales sum
+    #     last_year = datetime.date.today() - datetime.timedelta(days=365)
+    #     context['yearly_sales'] = OrderDetail.objects.filter(product__seller=self.request.user, created_on__gt=last_year).aggregate(Sum('amount'))
+
+    #     # 30 days sales sum
+    #     last_month = datetime.date.today() - datetime.timedelta(days=30)
+    #     context['monthly_sales'] = OrderDetail.objects.filter(product__seller=self.request.user, created_on__gt=last_month).aggregate(Sum('amount'))
+
+    #     # 7 days sales sum
+    #     last_week = datetime.date.today() - datetime.timedelta(days=7)
+    #     context['weekly_sales'] = OrderDetail.objects.filter(product__seller=self.request.user, created_on__gt=last_week).aggregate(Sum('amount'))
+
+    #     # Everyday sum for the past 30 days
+    #     daily_sales_sums = OrderDetail.objects.filter(product__seller=self.request.user).values('created_on__date').order_by('created_on__date').annotate(sum=Sum('amount'))
+    #     context['daily_sales_sums'] = daily_sales_sums
+
+    #     # Product sales sums
+    #     product_sales_sums = OrderDetail.objects.filter(product__seller=self.request.user).values('product__name').order_by('product__name').annotate(sum=Sum('amount'))
+    #     context['product_sales_sums'] = product_sales_sums
+
+    #     return context
